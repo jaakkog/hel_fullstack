@@ -1,1 +1,1 @@
-# hel_fullstack
+University of Helsinki FullStack Course 2020
