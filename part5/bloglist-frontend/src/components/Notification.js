@@ -1,4 +1,5 @@
 import React from 'react'
+import Alert from '@material-ui/lab/Alert'
 
 const Notification = ({ message }) => {
   if (message === null) {
@@ -6,8 +7,10 @@ const Notification = ({ message }) => {
   }
 
   return (
-    <div className="error">
+    <div>
+    <Alert severity="error" >
       {message}
+      </Alert>
     </div>
   )
 }

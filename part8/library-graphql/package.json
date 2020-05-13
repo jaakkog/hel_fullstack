@@ -1,0 +1,17 @@
+{
+  "name": "library-graphql",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js"
+  },
+  "author": "Jaakko Gummerus",
+  "license": "MIT",
+  "dependencies": {
+    "apollo-server": "^2.13.1",
+    "graphql": "^15.0.0",
+    "nodemon": "^2.0.3",
+    "uuid": "^3.4.0"
+  }
+}

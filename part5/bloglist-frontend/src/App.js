@@ -5,6 +5,10 @@ import Blog from './components/Blog'
 import Notification from './components/Notification'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import Container from '@material-ui/core/Container'
+import Button from '@material-ui/core/Button'
+import CancelIcon from '@material-ui/icons/Cancel'
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 
 const App = () => {
@@ -76,7 +80,7 @@ const App = () => {
             createBlog={addBlog}
             setVisibility={() => setLoginVisible(false)}
           />
-          <button onClick={() => setLoginVisible(false)}>cancel</button>
+          <Button variant="contained" startIcon={<CancelIcon />} onClick={() => setLoginVisible(false)}>cancel</Button>
         </div>
       </div>
     )
@@ -90,7 +94,7 @@ const App = () => {
     return (
       <div>
         <div style={showWhenVisible}>
-          <button onClick={() => setLoginVisible(false)}>log in</button>
+          <Button variant="contained" color="primary" onClick={() => setLoginVisible(false)}>log in</Button>
         </div>
         <div style={hideWhenVisible}>
           <LoginForm
@@ -100,7 +104,7 @@ const App = () => {
             setPassword={({ target }) => setPassword(target.value)}
             handleLogin={handleLogin}
           />
-          <button onClick={() => setLoginVisible(true)}>cancel</button>
+          <Button variant="contained" color="secondary" onClick={() => setLoginVisible(true)}>cancel</Button>
         </div>
       </div>
     )
@@ -153,10 +157,11 @@ const App = () => {
   }
 
   return (
+    <Container>
     <div>
       <h1>Blogs</h1>
       <p>{user.name} logged in</p>
-      <button onClick={logOutClick}>Log Out</button>
+      <Button color="secondary" startIcon={<ExitToAppIcon />} onClick={logOutClick}>Log Out</Button>
       <span id="blogs">
         {blogs
           .sort((a, b) => b.likes - a.likes)
@@ -166,6 +171,7 @@ const App = () => {
         {blogForm()}
       </span>
     </div>
+    </Container>
   )
 }
 

@@ -1,0 +1,7 @@
+DELETE http://localhost:3001/api/blogs
+content-type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFubmkiLCJpZCI6IjVlYTJlMDhiNGIzMWM5ODg2MDMxYTRkYiIsImlhdCI6MTU4NzczNjczOH0.rShr2GEhkqsRYx9hgKjck9jks9Wr6u-nvFEiBIQZE2A
+
+{
+    "title": "lifestyleBlogi"
+}
