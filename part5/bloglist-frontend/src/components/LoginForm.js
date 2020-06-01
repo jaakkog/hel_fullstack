@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button'
+import TextField from '@material-ui/core/TextField'
 
 
 const LoginForm = ({
@@ -15,19 +15,19 @@ const LoginForm = ({
     id="form"
     onSubmit={handleLogin}>
     <TextField id="filled-basic" label="Username" variant="filled" id="user"
-        type="text"
-        value={username}
-        name="Username"
-        onChange={setUsername}>
+      type="text"
+      value={username}
+      name="Username"
+      onChange={setUsername}>
         username
       <input/>
     </TextField>
     <div></div>
     <TextField id="filled-basic" label="Password" variant="filled"  id="pass"
-        type="password"
-        value={password}
-        name="Password"
-        onChange={setPassword}>
+      type="password"
+      value={password}
+      name="Password"
+      onChange={setPassword}>
         password
       <input/>
     </TextField>

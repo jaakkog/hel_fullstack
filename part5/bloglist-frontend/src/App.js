@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react'
+import { useDispatch } from 'react-redux'
+import { createNotification } from './reducers/notificationReducer'
+import { initialBlogs } from './reducers/blogReducer'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import Blog from './components/Blog'
@@ -8,7 +11,7 @@ import loginService from './services/login'
 import Container from '@material-ui/core/Container'
 import Button from '@material-ui/core/Button'
 import CancelIcon from '@material-ui/icons/Cancel'
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp'
 
 
 const App = () => {
@@ -18,6 +21,13 @@ const App = () => {
   const [errorMessage, setErrorMessage] = useState(null)
   const [user, setUser] = useState(null)
   const [loginVisible, setLoginVisible] = useState(false)
+
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    dispatch(initialBlogs())
+    console.log('blogit apissa', blogs)
+  }, [dispatch])
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -42,12 +52,6 @@ const App = () => {
   }
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs )
-    )
-  }, [])
-
-  useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
@@ -61,9 +65,10 @@ const App = () => {
     blogService
       .create(id, blogObject)
       .then(returnedBlog => {
+        console.log('blogi', returnedBlog)
         setBlogs(blogs.concat(returnedBlog))
+        dispatch(createNotification(`You added new blog: ${returnedBlog.title} by ${returnedBlog.author}`))
       })
-    alert('added new blog')
   }
 
   const blogForm = () => {
@@ -120,7 +125,7 @@ const App = () => {
 
   const logOutClick = (event) => {
     logOut(event)
-    alert(`Logging out ${user.name}`)
+    dispatch(createNotification((`Logging out ${user.name}`)))
   }
 
   const likeBlog = ((blog) => {
@@ -142,7 +147,7 @@ const App = () => {
         console.log(response)
         setBlogs(blogs)
       })
-    window.confirm(`deleting blog ${deletingBlog.title} by ${deletingBlog.author}`)
+    dispatch(createNotification((`deleting blog ${deletingBlog.title} by ${deletingBlog.author}`)))
     window.location = '/'
   }
 
@@ -158,19 +163,20 @@ const App = () => {
 
   return (
     <Container>
-    <div>
-      <h1>Blogs</h1>
-      <p>{user.name} logged in</p>
-      <Button color="secondary" startIcon={<ExitToAppIcon />} onClick={logOutClick}>Log Out</Button>
-      <span id="blogs">
-        {blogs
-          .sort((a, b) => b.likes - a.likes)
-          .map(blog =>
-            <Blog key={blog.id} blog={blog} updateBlog={likeBlog} eraseBlog={deleteBlog} user={user} />
-          )}
-        {blogForm()}
-      </span>
-    </div>
+      <div>
+        <h1>Blogs</h1>
+        <p>{user.name} logged in</p>
+        <Button color="secondary" startIcon={<ExitToAppIcon />} onClick={logOutClick}>Log Out</Button>
+        <span id="blogs">
+          {console.log('returnin blogit', blogs)}
+          {blogs
+            .sort((a, b) => b.likes - a.likes)
+            .map(blog =>
+              <Blog key={blog.id} blog={blog} updateBlog={likeBlog} eraseBlog={deleteBlog} user={user} />
+            )}
+          {blogForm()}
+        </span>
+      </div>
     </Container>
   )
 }

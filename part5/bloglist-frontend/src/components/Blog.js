@@ -1,18 +1,18 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from 'react'
 import Button from '@material-ui/core/Button'
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import Card from '@material-ui/core/Card';
-import { Tooltip } from '@material-ui/core';
-import IconButton from '@material-ui/core/IconButton';
-import DeleteIcon from '@material-ui/icons/Delete';
-import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import Table from '@material-ui/core/Table'
+import TableBody from '@material-ui/core/TableBody'
+import TableCell from '@material-ui/core/TableCell'
+import TableContainer from '@material-ui/core/TableContainer'
+import TableHead from '@material-ui/core/TableHead'
+import TableRow from '@material-ui/core/TableRow'
+import Card from '@material-ui/core/Card'
+import { Tooltip } from '@material-ui/core'
+import IconButton from '@material-ui/core/IconButton'
+import DeleteIcon from '@material-ui/icons/Delete'
+import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt'
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 
 
 const Blog = ({ blog, updateBlog, eraseBlog, user }) => {
@@ -63,30 +63,31 @@ const Blog = ({ blog, updateBlog, eraseBlog, user }) => {
     if (user.username === blog.user.username) {
       return (
         <Button variant="contained"
-        color="secondary"
-        startIcon={<DeleteIcon />} id="delete" onClick={deleteBlog}>delete</Button>
+          color="secondary"
+          startIcon={<DeleteIcon />} id="delete" onClick={deleteBlog}>delete</Button>
       )
     }
   }
 
   return (
     <div className="blogInfo">
-    <TableContainer component={Card}>
-    <div></div>
-    <TableHead>
-      <TableCell id="blogInfo">
-        {blog.title}
-        {blog.author}
-      </TableCell>
-      </TableHead>
-      <Button color="default" variant="contained" startIcon={<ExpandMoreIcon />} id="view" onClick={toggleVisibility}>view</Button>
-      <div style={showWhenVisible}>
-        <TableCell align="right"> Url: {blog.url}</TableCell> <TableCell id="numLikes"> likes: {blog.likes}</TableCell> 
-        <Tooltip>
-        <Button variant="contained" color="primary" startIcon={<ThumbUpAltIcon />} id="like" onClick={likeBlog}>like</Button>
-        </Tooltip>
-        {showDelete()}
-      </div>
+      <TableContainer component={Card}>
+        <div></div>
+        <TableHead>
+          <TableCell id="blogInfo">
+            {blog.title}
+            <br></br>
+            {blog.author}
+          </TableCell>
+        </TableHead>
+        <Button color="default" variant="contained" startIcon={<ExpandMoreIcon />} id="view" onClick={toggleVisibility}>view</Button>
+        <div style={showWhenVisible}>
+          <TableCell align="right"> Url: {blog.url}</TableCell> <TableCell id="numLikes"> likes: {blog.likes}</TableCell>
+          <Tooltip>
+            <Button variant="contained" color="primary" startIcon={<ThumbUpAltIcon />} id="like" onClick={likeBlog}>like</Button>
+          </Tooltip>
+          {showDelete()}
+        </div>
       </TableContainer>
     </div>
   )
