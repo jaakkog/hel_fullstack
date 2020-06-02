@@ -1,7 +1,8 @@
+/* eslint-disable react/display-name */
 import React, { useState, useEffect } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { createNotification } from './reducers/notificationReducer'
-import { initialBlogs } from './reducers/blogReducer'
+import { initialBlogs, newBlog, updateBlog, eraseBlog } from './reducers/blogReducer'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import Blog from './components/Blog'
@@ -12,10 +13,18 @@ import Container from '@material-ui/core/Container'
 import Button from '@material-ui/core/Button'
 import CancelIcon from '@material-ui/icons/Cancel'
 import ExitToAppIcon from '@material-ui/icons/ExitToApp'
+import AppBar from '@material-ui/core/AppBar'
+import Tabs from '@material-ui/core/Tabs'
+import Tab from '@material-ui/core/Tab'
+import {
+  BrowserRouter as Router,
+  Switch, Route
+} from 'react-router-dom'
+import Users from './components/Users'
+import { Link as RouterLink } from 'react-router-dom'
 
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [errorMessage, setErrorMessage] = useState(null)
@@ -26,8 +35,11 @@ const App = () => {
 
   useEffect(() => {
     dispatch(initialBlogs())
-    console.log('blogit apissa', blogs)
   }, [dispatch])
+
+
+  const blog = useSelector(data => data.blog)
+
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -61,14 +73,10 @@ const App = () => {
   }, [])
 
 
-  const addBlog = (id, blogObject) => {
-    blogService
-      .create(id, blogObject)
-      .then(returnedBlog => {
-        console.log('blogi', returnedBlog)
-        setBlogs(blogs.concat(returnedBlog))
-        dispatch(createNotification(`You added new blog: ${returnedBlog.title} by ${returnedBlog.author}`))
-      })
+  const addBlog = async (event) => {
+    dispatch(newBlog(event))
+    console.log('lisäyksen eventti', event)
+    dispatch(createNotification(`Adding blog ${event.title} by ${event.author}`))
   }
 
   const blogForm = () => {
@@ -128,27 +136,16 @@ const App = () => {
     dispatch(createNotification((`Logging out ${user.name}`)))
   }
 
-  const likeBlog = ((blog) => {
-    console.log('toimii', blog)
-    blogService.update(blog.id, blog)
-      .then(returnedBlog => {
-        blogs.concat(returnedBlog)
-        console.log('blogit', blogs)
-        setBlogs(blogs)
-      })
-  })
+  const likeBlog = (event) => {
+    dispatch(updateBlog(event))
+    window.location = '/blogs'
+  }
 
-  const deleteBlog = (id) => {
-    const deletingBlog = blogs.find((n) => n.id === id.id)
-    console.log(deletingBlog)
-    blogService
-      .erase(id)
-      .then((response) => {
-        console.log(response)
-        setBlogs(blogs)
-      })
-    dispatch(createNotification((`deleting blog ${deletingBlog.title} by ${deletingBlog.author}`)))
-    window.location = '/'
+  const deleteBlog = (event) => {
+    console.log('deleten eventti', event)
+    dispatch(eraseBlog(event))
+    dispatch(createNotification('deleting blog'), blog)
+    window.location = '/blogs'
   }
 
   if (user === null) {
@@ -161,22 +158,51 @@ const App = () => {
     )
   }
 
+  const padding = {
+    padding: 5
+  }
+
+  const LinkBehavior = React.forwardRef((props, ref) => (
+    <RouterLink ref={ref} to="/" {...props} />
+  ))
+
+  console.log('apin blogit', blog.flatMap(x => x))
+
   return (
     <Container>
-      <div>
-        <h1>Blogs</h1>
-        <p>{user.name} logged in</p>
-        <Button color="secondary" startIcon={<ExitToAppIcon />} onClick={logOutClick}>Log Out</Button>
-        <span id="blogs">
-          {console.log('returnin blogit', blogs)}
-          {blogs
-            .sort((a, b) => b.likes - a.likes)
-            .map(blog =>
-              <Blog key={blog.id} blog={blog} updateBlog={likeBlog} eraseBlog={deleteBlog} user={user} />
-            )}
-          {blogForm()}
-        </span>
-      </div>
+      <Router>
+        <div>
+          <AppBar position="static">
+            <Tabs>
+              <h2>BlogApp</h2>
+              <Tab style={padding} label='home' component={RouterLink} to="/" ></Tab>
+              <Tab style={padding} label='blogs' component={LinkBehavior} to="/blogs" />
+              <Tab style={padding} label='users' component={RouterLink} to="/users" />
+              <p>{user.name} logged in</p>
+              <Button color="secondary" startIcon={<ExitToAppIcon />} onClick={logOutClick}>Log Out</Button>
+            </Tabs>
+          </AppBar>
+        </div>
+        <Switch>
+          <Route path="/blogs">
+            <div>
+              <span>
+                {<Blog blog={blog} updateBlog={likeBlog} eraseBlog={deleteBlog} user={user} />}
+                {blogForm()}
+              </span>
+            </div>
+          </Route>
+          <Route path="/users">
+            <span id='users'>
+              <Users />
+            </span>
+          </Route>
+          <Route path="/">
+            <h1>Welcome to amazing Blog App</h1>
+            <p>Use navigation to browse blogs and users</p>
+          </Route>
+        </Switch>
+      </Router>
     </Container>
   )
 }

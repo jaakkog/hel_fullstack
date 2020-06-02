@@ -1,15 +1,16 @@
+/* eslint-disable consistent-return */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable prefer-destructuring */
 /* eslint-disable no-undef */
 const blogsRouter = require('express').Router()
+const jwt = require('jsonwebtoken')
 const Blog = require('../models/blog')
 const User = require('../models/user')
-const jwt = require('jsonwebtoken')
 
 
 blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog
-  .find({}).populate('user')
+    .find({}).populate('user')
   response.json(blogs.map((blog) => blog.toJSON()))
 })
 
@@ -40,7 +41,6 @@ blogsRouter.post('/', async (request, response) => {
 })
 
 blogsRouter.delete('/:id', async (request, response) => {
-
   const id = request.params.id
   console.log('id', id)
 

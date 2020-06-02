@@ -3,7 +3,8 @@ const notificationReducer = (state=[], action) => {
   switch (action.type) {
   case 'NOTIFICATION':
     console.log('dataa', action.data)
-    return alert(action.data.content)
+    alert(action.data)
+    return [...state, action.data]
   default:
     return state
   }
@@ -12,9 +13,7 @@ const notificationReducer = (state=[], action) => {
 export const createNotification = (content) => {
   return {
     type: 'NOTIFICATION',
-    data: {
-      content
-    }
+    data: content
   }
 }
 

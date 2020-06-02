@@ -1,4 +1,22 @@
-const { ApolloServer, gql } = require('apollo-server')
+const { ApolloServer, UserInputError, gql } = require('apollo-server')
+const mongoose = require('mongoose')
+const Author = require('./models/author')
+const Book = require('./models/book')
+
+mongoose.set('useFindAndModify', false)
+
+const MONGODB_URI = 'mongodb+srv://jaakko:mandre89@cluster0-hggf0.mongodb.net/test?retryWrites=true&w=majority'
+
+console.log('connecting to', MONGODB_URI)
+
+mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => {
+    console.log('connected to MongoDB')
+  })
+  .catch((error) => {
+    console.log('error connection to MongoDB:', error.message)
+  })
+
 
 const uuid = require('uuid/v1')
 
@@ -89,8 +107,8 @@ const typeDefs = gql`
     
     type Book {
         title: String!,
-        published: Int!
-        author: String!,
+        author: String,
+        published: Int!,
         genres: [String!]!
     }
     type Author {
@@ -100,8 +118,9 @@ const typeDefs = gql`
         bookCount: Int
     }
     type allAuthors {
-        name: String!
-        bookCount: Int!
+        name: String,
+        born: Int,
+        bookCount: Int
     }
 
     type Query {
@@ -137,23 +156,34 @@ const resolvers = {
         
     },
     allAuthors: () => {
-        console.log('mapattu', authors.map(x => x.name))
-        return authors.map(x => x.name)
+      console.log('authors', authors)
+      return authors
     },
   },
   Author: {
     bookCount: (root) => {
-        const count = books.filter(b => b.author === root)
+        const count = books.filter(b => b.author === root.name)
         return count.length
     },
     name: (root) => {
-        console.log(root)
-        return root
+        return root.name
+    },
+    born: (root) => {
+      return root.born
     }
   },
   Mutation: {
-    addBook: (root, args) => {
-        const book = { ...args, id: uuid() }
+    addBook: async (root, args) => {
+        const book = new Book({ ...args })
+        console.log('args', args)
+        try {
+          await book.save()
+        } catch (error) {
+          throw new UserInputError(error.message, {
+            invalidArgs: args,
+          })
+        }
+        /*
         books = books.concat(book)
         if (authors.find(a => a.name !== args.author)){
             console.log(args.author)
@@ -162,6 +192,7 @@ const resolvers = {
             console.log('authors', authors)
             return book
         }
+        */
         return book
     },
     editAuthor: (root, args) => {
