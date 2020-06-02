@@ -1,5 +1,21 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from 'react'
+import Button from '@material-ui/core/Button'
+import Table from '@material-ui/core/Table'
+import TableCell from '@material-ui/core/TableCell'
+import TableContainer from '@material-ui/core/TableContainer'
+import TableHead from '@material-ui/core/TableHead'
+import TableRow from '@material-ui/core/TableRow'
+import { makeStyles } from '@material-ui/core/styles'
+import Card from '@material-ui/core/Card'
+import DeleteIcon from '@material-ui/icons/Delete'
+import {
+  BrowserRouter as Router,
+  Switch, Route, Link, useRouteMatch
+} from 'react-router-dom'
+import SingleBlog from './SingleBlog'
+import { TableBody } from '@material-ui/core'
+
 
 const Blog = ({ blog, updateBlog, eraseBlog, user }) => {
   const blogStyle = {
@@ -11,6 +27,8 @@ const Blog = ({ blog, updateBlog, eraseBlog, user }) => {
     fontSize: '16px',
   }
 
+  console.log('blogin blogit', blog.map(x => x.title))
+
 
   const [visible, setVisible] = useState(false)
   const [author, setAuthor] = useState(blog.author)
@@ -21,7 +39,7 @@ const Blog = ({ blog, updateBlog, eraseBlog, user }) => {
 
   const likeBlog = (event) => {
     event.preventDefault()
-    console.log('toimii')
+    console.log('toimii', event)
     updateBlog({
       title: title,
       author: author,
@@ -37,33 +55,56 @@ const Blog = ({ blog, updateBlog, eraseBlog, user }) => {
       id: id
     })
   }
-
-  const hideWhenVisible = { display: visible ? 'none' : '' }
-  const showWhenVisible = { display: visible ? '' : 'none' }
-
-  const toggleVisibility = () => {
-    setVisible(!visible)
-  }
-
   const showDelete = () => {
-    if (user.username === blog.user.username) {
-      return (
-        <button id="delete" onClick={deleteBlog}>delete</button>
-      )
-    }
+    return (
+      <Button variant="contained"
+        color="secondary"
+        startIcon={<DeleteIcon />} id="delete" onClick={deleteBlog}>delete</Button>
+    )
   }
+
+  const useStyles = makeStyles({
+    table: {
+      minWidth: 650,
+      marginTop: 40,
+    },
+  })
+
+  const classes = useStyles()
+
+  const match = useRouteMatch('/blogs/:id')
+  const targetBlog = match
+    ? blog.find(data => data.id === (match.params.id))
+    : null
+
+
 
   return (
-    <div style={blogStyle} className="blogInfo">
-      <p id="blogInfo">
-        {blog.title}
-        {blog.author}
-      </p>
-      <button id="view" onClick={toggleVisibility}>view</button>
-      <div style={showWhenVisible}>
-        <p>{blog.url}</p> <p id="numLikes">{blog.likes}</p> <button id="like" onClick={likeBlog}>like</button>
-        {showDelete()}
-      </div>
+    <div>
+      <Router>
+        <TableContainer component={Card}>
+          <Table className={classes.table} aria-label="simple table">
+            <TableHead>
+            </TableHead>
+            <TableBody>
+              {blog.map(x =>
+                <TableRow key={x.id}>
+                  <TableCell component="th" scope="row">
+                    <Link to={`/blogs/${x.id}`}>{x.title}</Link>
+                  </TableCell>
+                  <TableCell align="right">{showDelete()}</TableCell>
+                  <TableCell align="right"><Button onClick={likeBlog}>Like</Button></TableCell>
+                </TableRow>)}
+            </TableBody>
+          </Table>
+        </TableContainer>
+
+        <Switch>
+          <Route path="/blogs/:id">
+            <SingleBlog blog={targetBlog}/>
+          </Route>
+        </Switch>
+      </Router>
     </div>
   )
 }
