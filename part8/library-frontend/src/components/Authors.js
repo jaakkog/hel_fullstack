@@ -12,9 +12,6 @@ const Authors = ( { show, authors } ) => {
   const [ editAuthor ] = useMutation(EDIT_AUTHOR, {
     refetchQueries: [ { query: ALL_AUTHORS } ]
   })
-
-
-  console.log('frontin authorit',authors)
   
   const submit = async (event) => {
     event.preventDefault()

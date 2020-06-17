@@ -81,12 +81,12 @@ const resolvers = {
   Query: {
     bookCount: () => Book.collection.countDocuments(),
     authorCount: () => Author.collection.countDocuments(),
-    allBooks: (root,args) => { 
-      return Book.find({}).populate('Authors')
+    allBooks: async (root,args) => {
+      console.log('booksit', await Book.find({}).populate('Author')) 
     },
-    allAuthors: (root, args) => {
-      //console.log('authorit', Author.find({}))
-      return Author.find({})
+    allAuthors: async (root, args) => {
+      console.log('authorit', await Author.find({}).populate('Book')) 
+      return Author.find({}).populate('Book')
     },
     me: (root, args, context) => {
       console.log('context', context)
@@ -103,8 +103,6 @@ const resolvers = {
   },
   Mutation: {
     addBook: async (root, args, context) => {
-
-      console.log('kirjanlisäyksen args', args)
 
       const currentUser = context.currentUser
 
