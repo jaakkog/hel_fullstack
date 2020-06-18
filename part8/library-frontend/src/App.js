@@ -1,12 +1,11 @@
 
 import React, { useState } from 'react'
 import Authors from './components/Authors'
-import { useQuery, useApolloClient } from '@apollo/client'
+import { useQuery, useMutation, useSubscription, useApolloClient } from '@apollo/client'
 import Books from './components/Books'
 import NewBook from './components/NewBook'
 import Login from './components/Login'
-import { ALL_AUTHORS } from './queries'
-import { ALL_BOOKS } from './queries'
+import { ALL_AUTHORS, ALL_BOOKS, BOOK_ADDED } from './queries'
 
 
 const App = () => {
@@ -15,8 +14,6 @@ const App = () => {
 
   const authors = useQuery(ALL_AUTHORS)
   const books = useQuery(ALL_BOOKS)
-  console.log('books', books.data)
-  console.log('authors', authors)
 
   const client = useApolloClient()
 
@@ -25,6 +22,13 @@ const App = () => {
     localStorage.clear()
     client.resetStore()
   }
+
+  useSubscription(BOOK_ADDED, {
+    onSubscriptionData: ({ subscriptionData }) => {
+      console.log('tilausdata', subscriptionData)
+    }
+  })
+
 
   if (books.loading)  {
     return <div>loading...</div>

@@ -60,7 +60,7 @@ const Authors = ( { show, authors } ) => {
             {authors.allAuthors.map(a => 
             <option value={a.name} key={a.id}>{a.name}</option>
             )}
-            {console.log()}
+            {console.log('name', name)}
             </select>
               <div>
               Born
